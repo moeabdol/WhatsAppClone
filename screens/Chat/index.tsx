@@ -11,13 +11,16 @@ import PlusIcon from '../../components/Icons/PlusIcon';
 import CameraIcon from '../../components/Icons/CameraIcon';
 import Colors from '../../utils/Colors';
 import PaperPlaneIcon from '../../components/Icons/PaperPlaneIcon';
+import { Platform } from 'react-native';
 
 function Chat() {
 	const [message, setMessage] = useState('');
 
 	return (
 		<Container>
-			<KeyboardAvoidingView>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+			>
 				<BackgroundImage source={require('../../assets/images/droplet.jpeg')} />
 				<BottomContainer>
 					<IconButton onPress={() => console.log('touched')}>
