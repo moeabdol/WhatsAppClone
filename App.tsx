@@ -24,18 +24,12 @@ const TabNavigator = () => (
 		<Tab.Screen
 			name="Chat List"
 			component={ChatList}
-			options={{
-				tabBarLabel: 'Chats',
-				tabBarIcon: () => <CommentIcon size="75%" />,
-			}}
+			options={{ tabBarLabel: 'Chats', tabBarIcon: CommentIcon }}
 		/>
 		<Tab.Screen
 			name="Settings"
 			component={Settings}
-			options={{
-				tabBarLabel: 'Settings',
-				tabBarIcon: () => <GearIcon size="75%" />,
-			}}
+			options={{ tabBarLabel: 'Settings', tabBarIcon: GearIcon }}
 		/>
 	</Tab.Navigator>
 );
@@ -52,16 +46,12 @@ function App() {
 					<RootStack.Screen
 						name="Home"
 						component={TabNavigator}
-						options={{
-							headerShown: false,
-						}}
+						options={{ headerShown: false }}
 					/>
 					<RootStack.Screen
 						name="ChatSettings"
 						component={ChatSettings}
-						options={{
-							gestureEnabled: true,
-						}}
+						options={{ gestureEnabled: true }}
 					/>
 				</RootStack.Navigator>
 			</NavigationContainer>
