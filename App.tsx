@@ -10,9 +10,11 @@ import ChatSettings from './screens/ChatSettings';
 import Settings from './screens/Settings';
 import CommentIcon from './components/Icons/CommentIcon';
 import GearIcon from './components/Icons/GearIcon';
+import Chat from './screens/Chat';
 
 export type RootStackProps = {
 	Home: undefined;
+	Chat: undefined;
 	ChatSettings: undefined;
 };
 
@@ -24,12 +26,12 @@ const TabNavigator = () => (
 		<Tab.Screen
 			name="Chat List"
 			component={ChatList}
-			options={{ tabBarLabel: 'Chats', tabBarIcon: CommentIcon }}
+			options={{ tabBarShowLabel: false, tabBarIcon: CommentIcon }}
 		/>
 		<Tab.Screen
 			name="Settings"
 			component={Settings}
-			options={{ tabBarLabel: 'Settings', tabBarIcon: GearIcon }}
+			options={{ tabBarShowLabel: false, tabBarIcon: GearIcon }}
 		/>
 	</Tab.Navigator>
 );
@@ -48,11 +50,8 @@ function App() {
 						component={TabNavigator}
 						options={{ headerShown: false }}
 					/>
-					<RootStack.Screen
-						name="ChatSettings"
-						component={ChatSettings}
-						options={{ gestureEnabled: true }}
-					/>
+					<RootStack.Screen name="Chat" component={Chat} />
+					<RootStack.Screen name="ChatSettings" component={ChatSettings} />
 				</RootStack.Navigator>
 			</NavigationContainer>
 		</SafeAreaProvider>

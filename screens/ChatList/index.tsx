@@ -12,9 +12,9 @@ function ChatList() {
 		<Container>
 			<Text>Chat list screen</Text>
 			<Button
-				text="Settings"
+				text="Chat"
 				className="primary"
-				onPress={() => navigation.navigate('ChatSettings')}
+				onPress={() => navigation.navigate('Chat')}
 			/>
 		</Container>
 	);
