@@ -3,9 +3,13 @@ import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
 import ChatList from './screens/ChatList';
 import ChatSettings from './screens/ChatSettings';
+import Settings from './screens/Settings';
+import CommentIcon from './components/Icons/CommentIcon';
+import GearIcon from './components/Icons/GearIcon';
 
 export type RootStackProps = {
 	Home: undefined;
@@ -13,6 +17,28 @@ export type RootStackProps = {
 };
 
 const RootStack = createNativeStackNavigator<RootStackProps>();
+const Tab = createBottomTabNavigator();
+
+const TabNavigator = () => (
+	<Tab.Navigator screenOptions={{ headerTitle: '' }}>
+		<Tab.Screen
+			name="Chat List"
+			component={ChatList}
+			options={{
+				tabBarLabel: 'Chats',
+				tabBarIcon: () => <CommentIcon size="75%" />,
+			}}
+		/>
+		<Tab.Screen
+			name="Settings"
+			component={Settings}
+			options={{
+				tabBarLabel: 'Settings',
+				tabBarIcon: () => <GearIcon size="75%" />,
+			}}
+		/>
+	</Tab.Navigator>
+);
 
 function App() {
 	useEffect(() => {
@@ -23,8 +49,20 @@ function App() {
 		<SafeAreaProvider>
 			<NavigationContainer>
 				<RootStack.Navigator initialRouteName="Home">
-					<RootStack.Screen name="Home" component={ChatList} />
-					<RootStack.Screen name="ChatSettings" component={ChatSettings} />
+					<RootStack.Screen
+						name="Home"
+						component={TabNavigator}
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<RootStack.Screen
+						name="ChatSettings"
+						component={ChatSettings}
+						options={{
+							gestureEnabled: true,
+						}}
+					/>
 				</RootStack.Navigator>
 			</NavigationContainer>
 		</SafeAreaProvider>
