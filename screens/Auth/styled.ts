@@ -11,3 +11,21 @@ export const Container = styled.View`
 	padding: 10px;
 	background-color: ${Colors.white};
 `;
+
+export const Link = styled.TouchableOpacity`
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-top: 10px;
+`;
+
+export const LinkText = styled.Text`
+	color: ${Colors.blue};
+`;
+
+export const Logo = styled.Image`
+	align-self: center;
+	resize-mode: contain;
+	width: 50%;
+`;

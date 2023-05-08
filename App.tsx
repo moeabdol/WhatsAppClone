@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -38,11 +38,11 @@ const TabNavigator = () => (
 );
 
 function App() {
+	const isSignedIn = false;
+
 	useEffect(() => {
 		SplashScreen.hide();
 	}, []);
-
-	const isSignedIn = false;
 
 	return (
 		<SafeAreaProvider>
