@@ -11,6 +11,7 @@ import Settings from './screens/Settings';
 import CommentIcon from './components/Icons/CommentIcon';
 import GearIcon from './components/Icons/GearIcon';
 import Chat from './screens/Chat';
+import Auth from './screens/Auth';
 
 export type RootStackProps = {
 	Home: undefined;
@@ -41,18 +42,24 @@ function App() {
 		SplashScreen.hide();
 	}, []);
 
+	const isSignedIn = false;
+
 	return (
 		<SafeAreaProvider>
 			<NavigationContainer>
-				<RootStack.Navigator initialRouteName="Home">
-					<RootStack.Screen
-						name="Home"
-						component={TabNavigator}
-						options={{ headerShown: false }}
-					/>
-					<RootStack.Screen name="Chat" component={Chat} />
-					<RootStack.Screen name="ChatSettings" component={ChatSettings} />
-				</RootStack.Navigator>
+				{!isSignedIn ? (
+					<Auth />
+				) : (
+					<RootStack.Navigator initialRouteName="Home">
+						<RootStack.Screen
+							name="Home"
+							component={TabNavigator}
+							options={{ headerShown: false }}
+						/>
+						<RootStack.Screen name="Chat" component={Chat} />
+						<RootStack.Screen name="ChatSettings" component={ChatSettings} />
+					</RootStack.Navigator>
+				)}
 			</NavigationContainer>
 		</SafeAreaProvider>
 	);

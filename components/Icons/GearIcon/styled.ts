@@ -5,5 +5,6 @@ type ContainerProps = {
 };
 
 export const Container = styled.View<ContainerProps>`
-	${props => (props.size ? `width: ${props.size}px` : '')};
+	${props =>
+		props.size ? `width: ${props.size}px; height: ${props.size}px` : ''};
 `;
