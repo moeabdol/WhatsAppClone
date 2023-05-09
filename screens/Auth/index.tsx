@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Container, Link, LinkText, Logo } from './styled';
+import { Container, ScrollView, Link, LinkText, Logo } from './styled';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
-import { ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 
 function Auth() {
 	const [isSignUp, setIsSignUp] = useState(false);

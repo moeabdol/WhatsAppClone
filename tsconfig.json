@@ -15,6 +15,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
+		"typeRoots": ["./types/"],
 		"types": ["@types/styled-components-react-native"]
 	},
 	"extends": "@tsconfig/react-native/tsconfig.json",

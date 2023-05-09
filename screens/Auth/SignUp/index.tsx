@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { FormElementContainer, ErrorContainer } from './styled';
+import React, { useState, useEffect } from 'react';
+import { FormElementContainer, ErrorContainer, LoadingSpinner } from './styled';
 import FormInput from '../../../components/FormInput';
 import Button from '../../../components/Button';
-import { SignUpFormSchema, SignUpForm } from '../../../types/SignUpForm';
+import { SignUpFormSchema, SignUpForm } from '../../../types/SignUpForm.d';
 import FormError from '../../../components/FormError';
+import { useMutation } from 'react-query';
+import { signUp, createUser } from '../../../api/Auth';
+import { Alert } from 'react-native';
+import { FirebaseError } from 'firebase/app';
 
 function Auth() {
 	const [signUpForm, setSignUpForm] = useState<SignUpForm>({
@@ -16,11 +20,40 @@ function Auth() {
 	const [lastNameTouched, setLastNameTouched] = useState(false);
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
+	const [error, setError] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const parsedSignUpForm = SignUpFormSchema.safeParse(signUpForm);
 	let formattedErrors;
 	if (!parsedSignUpForm.success)
 		formattedErrors = parsedSignUpForm.error.format();
+
+	const signUpMutation = useMutation(signUp, {
+		onSuccess: res => {
+			const { uid } = res.user;
+			createUserMutation.mutate({ signUpForm, uid });
+		},
+		onError: (err: FirebaseError) => {
+			if (err.code === 'auth/email-already-in-use') {
+				setError('Email already exists!');
+			}
+		},
+	});
+
+	const createUserMutation = useMutation(createUser, {
+		onSuccess: res => console.log(res),
+		onError: (err: FirebaseError) => console.log(err),
+	});
+
+	useEffect(() => {
+		if (signUpMutation.isLoading || createUserMutation.isLoading)
+			setIsLoading(true);
+		else setIsLoading(false);
+	}, [signUpMutation.isLoading, createUserMutation.isLoading]);
+
+	useEffect(() => {
+		if (error !== '') Alert.alert('An error occured', error);
+	}, [error]);
 
 	return (
 		<>
@@ -92,12 +125,16 @@ function Auth() {
 				)}
 			</FormElementContainer>
 
-			<Button
-				className="success"
-				text="Sign up"
-				onPress={() => console.log('pressed')}
-				disabled={!parsedSignUpForm.success}
-			/>
+			{isLoading ? (
+				<LoadingSpinner />
+			) : (
+				<Button
+					className="success"
+					text="Sign up"
+					onPress={() => signUpMutation.mutate(signUpForm)}
+					disabled={!parsedSignUpForm.success}
+				/>
+			)}
 		</>
 	);
 }
