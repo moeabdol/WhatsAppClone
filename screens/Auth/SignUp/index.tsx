@@ -20,11 +20,7 @@ function Auth() {
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
 	const dispatch = useAppDispatch();
-	const { loading, error, accessToken, userData } = useAppSelector(
-		state => state.auth
-	);
-
-	console.log(accessToken, userData);
+	const { loading, error } = useAppSelector(state => state.auth);
 
 	const parsedSignUpForm = SignUpFormSchema.safeParse(signUpForm);
 	let formattedErrors;

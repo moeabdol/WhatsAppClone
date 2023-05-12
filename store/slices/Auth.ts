@@ -1,32 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import type { SignUpForm } from '../../types/SignUpForm.d';
 import { signUp as signUpApi } from '../../api/Auth';
+import { RootState } from '..';
 
-type AuthState = {
-	loading: boolean;
-	error: string | undefined;
-	accessToken: string | undefined;
-	userData: any | undefined;
+type UserData = {
+	uid: string;
+	firstName: string;
+	lastName: string;
+	firstLast: string;
+	email: string;
+	createdAt: string;
 };
 
-const initialState: AuthState = {
+type AuthSliceState = {
+	loading?: boolean;
+	error?: string;
+	accessToken?: string;
+	userData?: UserData;
+};
+
+const initialState: AuthSliceState = {
 	loading: false,
-	error: undefined,
-	accessToken: undefined,
-	userData: undefined,
 };
 
-export const signUp = createAsyncThunk(
-	'auth/signUp',
-	async (signUpForm: SignUpForm, thunkApi) => {
-		try {
-			return await signUpApi(signUpForm);
-		} catch (error: any) {
-			return thunkApi.rejectWithValue(error.code);
-		}
-	}
-);
+export const signUp = createAsyncThunk<
+	AuthSliceState,
+	SignUpForm,
+	{ state: RootState; rejectValue: string }
+>('auth/signUp', async signUpForm => await signUpApi(signUpForm));
 
 const authSlice = createSlice({
 	name: 'auth',
@@ -37,12 +38,12 @@ const authSlice = createSlice({
 			.addCase(signUp.pending, state => {
 				state.loading = true;
 			})
-			.addCase(signUp.fulfilled, (state, action: PayloadAction<AuthState>) => {
+			.addCase(signUp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.accessToken = action.payload.accessToken;
 				state.userData = action.payload.userData;
 			})
-			.addCase(signUp.rejected, (state, action: PayloadAction<string>) => {
+			.addCase(signUp.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});
