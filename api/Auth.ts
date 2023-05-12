@@ -5,11 +5,16 @@ import { child, getDatabase, ref, set } from 'firebase/database';
 
 export const signUp = async (signUpForm: SignUpForm) => {
 	const auth = getAuth(app);
-	return await createUserWithEmailAndPassword(
+	const res = await createUserWithEmailAndPassword(
 		auth,
 		signUpForm.email,
 		signUpForm.password
 	);
+	const user = res.user;
+	const { uid } = user;
+	const accessToken = await user.getIdToken();
+	const userData = await createUser({ signUpForm, uid });
+	return { accessToken, userData };
 };
 
 export type createUserProps = {
@@ -29,7 +34,8 @@ export const createUser = async ({ signUpForm, uid }: createUserProps) => {
 		createdAt: new Date().toISOString(),
 	};
 
-	const dbRef = ref(getDatabase());
+	const dbRef = ref(await getDatabase());
 	const childRef = child(dbRef, `users/${uid}`);
 	await set(childRef, userData);
+	return userData;
 };

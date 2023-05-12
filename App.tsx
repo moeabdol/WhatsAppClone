@@ -4,7 +4,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { Provider } from 'react-redux';
+import store from './store';
 import SplashScreen from 'react-native-splash-screen';
 import ChatList from './screens/ChatList';
 import ChatSettings from './screens/ChatSettings';
@@ -22,8 +23,6 @@ export type RootStackProps = {
 
 const RootStack = createNativeStackNavigator<RootStackProps>();
 const Tab = createBottomTabNavigator();
-
-const queryClient = new QueryClient();
 
 const TabNavigator = () => (
 	<Tab.Navigator screenOptions={{ headerTitle: '' }}>
@@ -48,7 +47,7 @@ function App() {
 	}, []);
 
 	return (
-		<QueryClientProvider client={queryClient}>
+		<Provider store={store}>
 			<SafeAreaProvider>
 				<NavigationContainer>
 					{!isSignedIn ? (
@@ -66,7 +65,7 @@ function App() {
 					)}
 				</NavigationContainer>
 			</SafeAreaProvider>
-		</QueryClientProvider>
+		</Provider>
 	);
 }
 

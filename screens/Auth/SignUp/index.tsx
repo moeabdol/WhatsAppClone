@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FormElementContainer, ErrorContainer, LoadingSpinner } from './styled';
 import FormInput from '../../../components/FormInput';
 import Button from '../../../components/Button';
 import { SignUpFormSchema, SignUpForm } from '../../../types/SignUpForm.d';
 import FormError from '../../../components/FormError';
-import { useMutation } from 'react-query';
-import { signUp, createUser } from '../../../api/Auth';
 import { Alert } from 'react-native';
-import { FirebaseError } from 'firebase/app';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { signUp } from '../../../store/slices/Auth';
 
 function Auth() {
 	const [signUpForm, setSignUpForm] = useState<SignUpForm>({
@@ -20,40 +19,21 @@ function Auth() {
 	const [lastNameTouched, setLastNameTouched] = useState(false);
 	const [emailTouched, setEmailTouched] = useState(false);
 	const [passwordTouched, setPasswordTouched] = useState(false);
-	const [error, setError] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
+	const dispatch = useAppDispatch();
+	const { loading, error, accessToken, userData } = useAppSelector(
+		state => state.auth
+	);
+
+	console.log(accessToken, userData);
 
 	const parsedSignUpForm = SignUpFormSchema.safeParse(signUpForm);
 	let formattedErrors;
 	if (!parsedSignUpForm.success)
 		formattedErrors = parsedSignUpForm.error.format();
 
-	const signUpMutation = useMutation(signUp, {
-		onSuccess: res => {
-			const { uid } = res.user;
-			createUserMutation.mutate({ signUpForm, uid });
-		},
-		onError: (err: FirebaseError) => {
-			if (err.code === 'auth/email-already-in-use') {
-				setError('Email already exists!');
-			}
-		},
-	});
-
-	const createUserMutation = useMutation(createUser, {
-		onSuccess: res => console.log(res),
-		onError: (err: FirebaseError) => console.log(err),
-	});
-
-	useEffect(() => {
-		if (signUpMutation.isLoading || createUserMutation.isLoading)
-			setIsLoading(true);
-		else setIsLoading(false);
-	}, [signUpMutation.isLoading, createUserMutation.isLoading]);
-
-	useEffect(() => {
-		if (error !== '') Alert.alert('An error occured', error);
-	}, [error]);
+	if (error === 'auth/email-already-in-use') {
+		Alert.alert('Something went wrong!', 'Email already in use!');
+	}
 
 	return (
 		<>
@@ -125,14 +105,14 @@ function Auth() {
 				)}
 			</FormElementContainer>
 
-			{isLoading ? (
+			{loading ? (
 				<LoadingSpinner />
 			) : (
 				<Button
 					className="success"
 					text="Sign up"
-					onPress={() => signUpMutation.mutate(signUpForm)}
 					disabled={!parsedSignUpForm.success}
+					onPress={async () => await dispatch(signUp(signUpForm))}
 				/>
 			)}
 		</>
