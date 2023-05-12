@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormElementContainer, ErrorContainer, LoadingSpinner } from './styled';
 import FormInput from '../../../components/FormInput';
 import Button from '../../../components/Button';
@@ -6,7 +6,7 @@ import { SignUpFormSchema, SignUpForm } from '../../../types/SignUpForm.d';
 import FormError from '../../../components/FormError';
 import { Alert } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { signUp } from '../../../store/slices/Auth';
+import { signUp, resetError } from '../../../store/slices/Auth';
 
 function Auth() {
 	const [signUpForm, setSignUpForm] = useState<SignUpForm>({
@@ -27,9 +27,12 @@ function Auth() {
 	if (!parsedSignUpForm.success)
 		formattedErrors = parsedSignUpForm.error.format();
 
-	if (error === 'auth/email-already-in-use') {
-		Alert.alert('Something went wrong!', 'Email already in use!');
-	}
+	useEffect(() => {
+		if (error && error === 'auth/email-already-in-use') {
+			Alert.alert('Something went wrong!', 'Email already in use!');
+			dispatch(resetError());
+		}
+	}, [dispatch, error]);
 
 	return (
 		<>
