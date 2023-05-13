@@ -4,8 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Provider } from 'react-redux';
-import store from './store';
+import { useAppSelector } from './store';
 import SplashScreen from 'react-native-splash-screen';
 import ChatList from './screens/ChatList';
 import ChatSettings from './screens/ChatSettings';
@@ -40,32 +39,30 @@ const TabNavigator = () => (
 );
 
 function App() {
-	const isSignedIn = false;
+	const { accessToken } = useAppSelector(state => state.auth);
 
 	useEffect(() => {
 		SplashScreen.hide();
 	}, []);
 
 	return (
-		<Provider store={store}>
-			<SafeAreaProvider>
-				<NavigationContainer>
-					{!isSignedIn ? (
-						<Auth />
-					) : (
-						<RootStack.Navigator initialRouteName="Home">
-							<RootStack.Screen
-								name="Home"
-								component={TabNavigator}
-								options={{ headerShown: false }}
-							/>
-							<RootStack.Screen name="Chat" component={Chat} />
-							<RootStack.Screen name="ChatSettings" component={ChatSettings} />
-						</RootStack.Navigator>
-					)}
-				</NavigationContainer>
-			</SafeAreaProvider>
-		</Provider>
+		<SafeAreaProvider>
+			<NavigationContainer>
+				{!accessToken || accessToken === '' ? (
+					<Auth />
+				) : (
+					<RootStack.Navigator initialRouteName="Home">
+						<RootStack.Screen
+							name="Home"
+							component={TabNavigator}
+							options={{ headerShown: false }}
+						/>
+						<RootStack.Screen name="Chat" component={Chat} />
+						<RootStack.Screen name="ChatSettings" component={ChatSettings} />
+					</RootStack.Navigator>
+				)}
+			</NavigationContainer>
+		</SafeAreaProvider>
 	);
 }
 

@@ -3,6 +3,7 @@ import type { SignUpForm } from '../../types/SignUpForm.d';
 import { signUp as signUpApi } from '../../api/Auth';
 import { RootState } from '..';
 import { FirebaseError } from 'firebase/app';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type UserData = {
 	uid: string;
@@ -17,7 +18,7 @@ type AuthSliceState = {
 	loading?: boolean;
 	error?: string;
 	accessToken?: string;
-	userData?: UserData;
+	user?: UserData;
 };
 
 const initialState: AuthSliceState = {
@@ -30,7 +31,11 @@ export const signUp = createAsyncThunk<
 	{ state: RootState; rejectValue: string }
 >('auth/signUp', async (signUpForm, thunkApi) => {
 	try {
-		return await signUpApi(signUpForm);
+		const res = await signUpApi(signUpForm);
+		const { user, accessToken } = res;
+		await AsyncStorage.setItem('uid', user.uid);
+		await AsyncStorage.setItem('accessToken', accessToken);
+		return res;
 	} catch (error) {
 		if (error instanceof FirebaseError)
 			return thunkApi.rejectWithValue(error.code);
@@ -52,7 +57,7 @@ const authSlice = createSlice({
 			.addCase(signUp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.accessToken = action.payload.accessToken;
-				state.userData = action.payload.userData;
+				state.user = action.payload.user;
 			})
 			.addCase(signUp.rejected, (state, action) => {
 				state.loading = false;

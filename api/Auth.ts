@@ -14,7 +14,7 @@ export const signUp = async (signUpForm: SignUpForm) => {
 	const { uid } = user;
 	const accessToken = await user.getIdToken();
 	const userData = await createUser({ signUpForm, uid });
-	return { accessToken, userData };
+	return { accessToken, user: userData };
 };
 
 export type createUserProps = {
