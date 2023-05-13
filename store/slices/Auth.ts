@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { SignUpForm } from '../../types/SignUpForm.d';
+import type { SignInForm } from '../../types/SignInForm.d';
 import {
 	signUp as signUpApi,
 	getUserData as getUserDataApi,
+	signIn as signInApi,
 } from '../../api/Auth';
 import { RootState } from '..';
 import { FirebaseError } from 'firebase/app';
@@ -60,6 +62,24 @@ export const getUserData = createAsyncThunk<
 	}
 });
 
+export const signIn = createAsyncThunk<
+	AuthSliceState,
+	SignInForm,
+	{ state: RootState; rejectValue: string }
+>('auth/signIn', async (signInForm, thunkApi) => {
+	try {
+		const res = await signInApi(signInForm);
+		const { user, accessToken } = res;
+		await AsyncStorage.setItem('uid', user.uid);
+		await AsyncStorage.setItem('accessToken', accessToken);
+		return res;
+	} catch (error) {
+		if (error instanceof FirebaseError)
+			return thunkApi.rejectWithValue(error.code);
+		else return thunkApi.rejectWithValue('Something went wrong!');
+	}
+});
+
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
@@ -93,6 +113,18 @@ const authSlice = createSlice({
 				state.user = action.payload.user;
 			})
 			.addCase(getUserData.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(signIn.pending, state => {
+				state.loading = true;
+			})
+			.addCase(signIn.fulfilled, (state, action) => {
+				state.loading = false;
+				state.accessToken = action.payload.accessToken;
+				state.user = action.payload.user;
+			})
+			.addCase(signIn.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});

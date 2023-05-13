@@ -1,6 +1,11 @@
 import { app } from './firebase';
-import { SignUpForm } from '../types/SignUpForm.d';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import type { SignUpForm } from '../types/SignUpForm.d';
+import type { SignInForm } from '../types/SignInForm.d';
+import {
+	createUserWithEmailAndPassword,
+	getAuth,
+	signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { child, getDatabase, ref, set, get } from 'firebase/database';
 
 export const signUp = async (signUpForm: SignUpForm) => {
@@ -44,4 +49,18 @@ export const getUserData = async (uid: string) => {
 	const userRef = child(dbRef, `users/${uid}`);
 	const snapshot = await get(userRef);
 	return snapshot.val();
+};
+
+export const signIn = async (signInForm: SignInForm) => {
+	const auth = getAuth(app);
+	const res = await signInWithEmailAndPassword(
+		auth,
+		signInForm.email,
+		signInForm.password
+	);
+	const user = res.user;
+	const { uid } = user;
+	const accessToken = await user.getIdToken();
+	const userData = await getUserData(uid);
+	return { accessToken, user: userData };
 };
