@@ -13,7 +13,6 @@ import CommentIcon from './components/Icons/CommentIcon';
 import GearIcon from './components/Icons/GearIcon';
 import Chat from './screens/Chat';
 import Auth from './screens/Auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type RootStackProps = {
 	Home: undefined;
@@ -41,7 +40,6 @@ const TabNavigator = () => (
 
 function App() {
 	const { accessToken } = useAppSelector(state => state.auth);
-	AsyncStorage.clear();
 
 	useEffect(() => {
 		SplashScreen.hide();
